@@ -1,0 +1,23 @@
+- hosts: all
+  tasks:
+    - set_fact:
+        prepull_images: "{{ prepull_images + ['registry.k8s.io/pause:3.9'] }}"
+
+- name: Install Runtime and Kubernetes
+  hosts:
+    - masters
+    - workers
+  roles:
+    - runtime
+    - download-k8s
+    - install-k8s
+
+- name: Install networking - calico
+  hosts: masters
+  roles:
+    - install-calico
+
+- name: Perf Cluster Setup Tasks
+  hosts: masters
+  roles:
+    - perf-cluster-tasks

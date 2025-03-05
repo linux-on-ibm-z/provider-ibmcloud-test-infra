@@ -1,0 +1,6 @@
+{
+  "directory": "release",
+  "build_version": "v1.21.3",
+  "release_marker": "release/v1.21.3",
+  "extra_cert": "169.48.19.202"
+}

@@ -1,0 +1,31 @@
+- name: Generate download URL based on S3 server.
+  set_fact:
+    src_template: >-
+      {% if s3_server == 'dl.k8s.io' -%}
+        https://{{ s3_server }}/{{ directory }}/{{ build_version }}
+      {%- else -%}
+        https://{{ s3_server }}/{{ bucket }}/{{ directory }}/{{ build_version }}
+      {%- endif %}
+
+- name: Extract the k8s bits
+  unarchive:
+    src: "{{ src_template }}/{{ item }}"
+    dest: "/usr/local/bin/"
+    remote_src: yes
+    extra_opts:
+      - --strip-components=3
+  with_items: "{{ k8s_tar_bundles }}"
+  retries: 3
+  delay: 5
+
+- name: Import container images
+  shell: |
+    export ARCH={{ ansible_architecture }}
+    ctr -n k8s.io images import "/usr/local/bin/{{ item }}.tar"
+    ctr -n k8s.io images ls -q | grep -e {{ item }} | xargs -L 1 -I '{}' /bin/bash -c 'ctr -n k8s.io images tag "{}" "$(echo "{}" | sed s/-'$ARCH':/:/)"'
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kubectl
+    - kube-proxy
+    - kube-scheduler

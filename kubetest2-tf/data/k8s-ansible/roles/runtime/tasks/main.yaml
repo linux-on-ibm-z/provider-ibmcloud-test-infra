@@ -1,0 +1,84 @@
+---
+- name: Add Redhat Subscription
+  block:
+    - name: check username and password are set
+      fail:
+        msg: "username and password are the mandatory values to execute the playbook for rhel"
+      when:  ansible_distribution == "RedHat" and  username is not defined or password is not defined
+
+    - name: Register RHEL
+      shell: subscription-manager register --username {{ username }} --password {{ password }} --auto-attach
+      when:  ansible_distribution == "RedHat"
+
+- name: Forwarding IPv4 and letting iptables see bridged traffic
+  block:
+    - name: Loading Modules Boot Time
+      copy:
+        dest: "/etc/modules-load.d/k8s.conf"
+        content: |
+          overlay
+          br_netfilter
+
+    - name: Load kernel modules First time
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - overlay
+        - br_netfilter
+
+    - name: Sysctl settings
+      sysctl:
+        name: "{{ item }}"
+        sysctl_file: /etc/sysctl.d/k8s.conf
+        value: 1
+        state: present
+        reload: yes
+      with_items:
+        - net.bridge.bridge-nf-call-iptables
+        - net.bridge.bridge-nf-call-ip6tables
+        - net.ipv4.ip_forward
+
+- name: Common Prerequisites
+  block:
+    - name: Generate crictl.yaml
+      template:
+        src: crictl/crictl.yaml.j2
+        dest: /etc/crictl.yaml
+        mode: '0644'
+    - name: Install crictl - {{ critools_version }}
+      unarchive:
+        src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ critools_version }}/crictl-v{{ critools_version }}-linux-{{ ansible_architecture }}.tar.gz"
+        dest: "/usr/local/bin/"
+        remote_src: yes
+
+    - name: Install iptables
+      yum:
+        name: iptables
+      when: ansible_pkg_mgr == 'yum'
+
+    - name: Install iptables
+      apt:
+        force_apt_get: yes
+        update_cache: yes
+        name: iptables
+      when: ansible_pkg_mgr == 'apt'
+
+    - name: Install runc - {{ runc_version }}
+      get_url:
+        url: "https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.{{ ansible_architecture }}"
+        dest: /usr/local/bin/runc
+        mode: '0755'
+
+- name: Install and Configure Runtime - Containerd
+  import_tasks: containerd.yaml
+  when: runtime == "containerd"
+
+- name: Install and Configure Runtime - CRI-O
+  import_tasks: crio.yaml
+  when: runtime == "crio"
+
+- name: Pre-pull sandbox-images in the test environment.
+  shell: crictl pull {{ item }}
+  with_items: "{{ prepull_images }}"
+  when: prepull_images | length > 0

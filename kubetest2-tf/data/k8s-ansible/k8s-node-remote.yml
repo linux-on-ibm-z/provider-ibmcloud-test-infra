@@ -1,0 +1,9 @@
+- name: Install prerequisites and run e2e node tests
+  hosts:
+    - masters
+  roles:
+    - disable-swap-selinux
+    - install-bridge-cni
+    - install-etcd
+    - runtime
+    - k8s-node

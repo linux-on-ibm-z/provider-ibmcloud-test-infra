@@ -1,0 +1,49 @@
+---
+- name: Install containerd dependencies
+  yum:
+    name:
+      - device-mapper-persistent-data
+      - lvm2
+    state: present
+    disable_gpg_check: true
+  when: ansible_pkg_mgr == 'yum'
+
+- name: Install containerd dependencies
+  apt:
+    name:
+      - lvm2
+    state: present
+    allow_unauthenticated: true
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Download and set up containerd - {{ containerd_version }}
+  unarchive:
+    src: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ ansible_architecture }}.tar.gz"
+    dest: "/usr/local"
+    remote_src: yes
+  retries: 3
+  delay: 5
+
+- name: Create the containerd.service file on nodes.
+  get_url:
+    url: "https://raw.githubusercontent.com/containerd/containerd/main/containerd.service"
+    dest: /usr/lib/systemd/system/containerd.service
+    mode: '0755'
+
+- name: Create a /etc/containerd dir
+  file:
+    path: /etc/containerd
+    state: directory
+    mode: '0755'
+
+- name: Generate /etc/containerd/config.toml
+  template:
+    src: containerd/config.toml.j2
+    dest: /etc/containerd/config.toml
+    mode: '0644'
+
+- name: Enable and Restart containerd
+  systemd:
+    name: containerd
+    state: restarted
+    enabled: yes
