@@ -1,0 +1,92 @@
+---
+ansible_connection: ssh
+ansible_user: root
+ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
+ansible_ssh_private_key_file: "{{ ssh_private_key }}"
+
+ssh_private_key: "~/.ssh/id_rsa"
+
+#Redhat Subscription with username and password
+username: <username>
+password: <password>
+
+# kubeconfig on the local machine where kubeconfig content will be copied from the remote machine
+kubeconfig_path: kubeconfig
+
+##### Runtime Configurations #####
+# cri-tools version
+critools_version: 1.29.0
+runc_version: 1.1.12
+# valid runtimes: containerd [default], crio.
+runtime: containerd
+containerd_version: 1.7.13
+crio_version: 1.29.1
+pause_container_image: registry.k8s.io/pause:3.9
+
+cgroup_driver: systemd
+# By default it will set to the default interface MTU value, set the MTU here to override it
+# MTU: 9000
+# additional docker mirrors to avoid the flood to the hub.docker.com
+registry_mirrors:
+  - https://mirror.gcr.io
+  - https://registry-1.docker.io
+
+##### Kubernetes Configurations #####
+k8s_tar_bundles:
+  - kubernetes-test-linux-ppc64le.tar.gz
+  - kubernetes-client-linux-ppc64le.tar.gz
+  - kubernetes-server-linux-ppc64le.tar.gz
+apiserver_port: 6443
+loadbalancer: ""
+cluster_name: "k8s-cluster-1"
+powervs_dns_zone: "k8s.test"
+pod_subnet: 172.20.0.0/16
+extra_cert: "{{ cluster_name }}-master.{{ powervs_dns_zone }}"
+# https://github.com/kubernetes/kubernetes/blob/66334f02e8c520df7973c397246da82cd4db2769/cmd/kubeadm/app/util/version_test.go#L193:L199 for more information
+release_marker: ci/latest
+bootstrap_token: abcdef.0123456789abcdef
+kubelet_extra_args: ""
+k8s_branch: master
+
+# in the format of: https://dl.k8s.io/{{ directory }}/{{ build_version }}/kubernetes-client-linux-ppc64le.tar.gz
+# Eg: https://dl.k8s.io/ci/v1.28.0-alpha.1.48+039ae1edf5a71f/kubernetes-client-linux-ppc64le.tar.gz
+# used for downloading the kubernetes bits
+# GCS web: https://gcsweb.k8s.io/gcs/kubernetes-release-dev/ci/
+s3_server: dl.k8s.io
+directory: ci
+build_version: v1.20.0-alpha.0.1402+d39214ade1d60c
+
+# For IBM s3 bucket:
+# https://s3.us-south.cloud-object-storage.appdomain.cloud/{{ bucket }}/{{ directory }}/{{ build_version }}/kubernetes-client-linux-ppc64le.tar.gz
+# Eg: https://s3.us-south.cloud-object-storage.appdomain.cloud/ppc64le-ci-builds/kubernetes/master/golang/master/d39214ade1d60c/kubernetes-client-linux-ppc64le.tar.gz
+#
+# s3_server: s3.us-south.cloud-object-storage.appdomain.cloud
+bucket: ppc64le-ci-builds
+# directory: kubernetes/master/golang/master
+# build_version: d39214ade1d60c
+
+##### CNI provider #####
+cni_provider: calico
+
+##### Calico Configurations #####
+calico_version: v3.27.0
+# The available methods of installation for Calico can be either using the tigera operator, or using the manifest.
+# Choose between "operator" or "manifest" (default) for the desired installation method.
+calico_installation_type: manifest
+
+##### List of images to be prepulled #####
+prepull_images: []
+
+##### ETCD version #####
+etcd_version: v3.5.9
+
+##### Flannel configurations #####
+flannel_version: v0.26.1
+
+##### Bridge CNI Configurations #####
+cni_plugins_version: v1.3.0
+cni_plugins_url: https://github.com/containernetworking/plugins/releases/download
+cni_plugins_tarball: "cni-plugins-linux-{{ ansible_architecture }}-{{ cni_plugins_version }}.tgz"
+
+# NFS server details
+nfs_directory: "/var/nfsshare"
