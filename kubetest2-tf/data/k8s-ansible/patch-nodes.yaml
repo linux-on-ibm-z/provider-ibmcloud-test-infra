@@ -1,0 +1,15 @@
+- name: Update nodes with latest patches and updates
+  hosts:
+    - masters
+    - workers
+  roles:
+    - role: update-node-os
+
+- name: Reboot Kubernetes nodes one-by-one
+  hosts:
+    - masters
+    - workers
+  serial: 1
+  become: yes
+  roles:
+    - role: reboot-sequentially
