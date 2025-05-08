@@ -23,5 +23,5 @@
 
 - name: Reboot if necessary
   reboot:
-  when: reboot_check.rc == 1 and ansible_distribution in ['CentOS', 'RHEL']
+  when: ansible_distribution in ['CentOS', 'RHEL'] and reboot_check.rc == 1
 
