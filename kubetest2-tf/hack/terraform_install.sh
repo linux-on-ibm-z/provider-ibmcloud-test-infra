@@ -27,6 +27,7 @@ install_terraform(){
     if [[ ! -z $(command -v terraform) ]]; then
         echo "terraform already present"
     else
+        echo"s390x installation"
         cd /tmp
         curl -fsSL https://github.com/hashicorp/terraform/archive/refs/tags/v${TF_VERSION}.zip -o ./terraform.zip
         unzip -o ./terraform.zip  >/dev/null 2>&1
@@ -84,6 +85,7 @@ if [[ "${ARCH}" == "ppc64le" ]]; then
     build_ibm_provider
     build_null_provider
 elif [[ "${ARCH}" == "s390x" ]]; then
+    echo "s390x"
     install_terraform
     build_ibm_provider
     build_null_provider

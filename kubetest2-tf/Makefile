@@ -12,7 +12,7 @@ INSTALL?=install
 INSTALL_DIR?=$(shell $(REPO_ROOT)/hack/goinstalldir.sh)
 # the output binary name, overridden when cross compiling
 BINARY_NAME=kubetest2-tf
-BUILD_FLAGS=-trimpath -ldflags="-buildid= -X=sigs.k8s.io/provider-ibmcloud-test-infra/kubetest2-tf/deployer/deployer.GitTag=$(COMMIT)"
+BUILD_FLAGS=-trimpath -ldflags="-buildid= -X=linux-on-ibm-z/provider-ibmcloud-test-infra/kubetest2-tf/deployer/deployer.GitTag=$(COMMIT)"
 # ==============================================================================
 
 setup-tf:
