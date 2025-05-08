@@ -32,6 +32,8 @@ install_terraform(){
         curl -fsSL https://github.com/hashicorp/terraform/archive/refs/tags/v${TF_VERSION}.zip -o ./terraform.zip
         unzip -o ./terraform.zip  >/dev/null 2>&1
         rm -f ./terraform.zip
+        ls /tmp
+        echo ${TF_VERSION}
         cd terraform-${TF_VERSION}
         go build .
         cp terraform /usr/local/bin/
