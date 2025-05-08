@@ -32,8 +32,6 @@ install_terraform(){
         curl -fsSL https://github.com/hashicorp/terraform/archive/refs/tags/v${TF_VERSION}.zip -o ./terraform.zip
         unzip -o ./terraform.zip  >/dev/null 2>&1
         rm -f ./terraform.zip
-        ls /tmp
-        echo ${TF_VERSION}
         cd terraform-${TF_VERSION}
         go build .
         cp terraform /usr/local/bin/
@@ -54,6 +52,7 @@ install_terraform_x86(){
 
 build_ibm_provider(){
     if [[ ! -f "${TF_PLUGIN_PATH}/IBM-Cloud/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_ppc64le/terraform-provider-ibm" || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_ppc64le/terraform-provider-ibm" || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_s390x/terraform-provider-ibm"  || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_s390x/terraform-provider-ibm" ]]; then
+        echo "building ibm provider"
         cd /tmp
         curl -fsSL https://github.com/IBM-Cloud/terraform-provider-ibm/archive/refs/tags/v${TERRAFORM_PROVIDER_IBM_VERSION}.zip -o ./terraform-provider-ibm.zip
         unzip -o ./terraform-provider-ibm.zip  >/dev/null 2>&1
@@ -69,6 +68,7 @@ build_ibm_provider(){
 
 build_null_provider(){
     if [ ! -f "${TF_PLUGIN_PATH}/hashicorp/null/${TERRAFORM_PROVIDER_NULL_VERSION}/linux_ppc64le/terraform-provider-null" || ! -f "${TF_PLUGIN_PATH}/hashicorp/null/${TERRAFORM_PROVIDER_NULL_VERSION}/linux_s390x/terraform-provider-null" ]; then
+        echo "building null provider"
         cd /tmp
         curl -fsSL https://github.com/hashicorp/terraform-provider-null/archive/refs/tags/v${TERRAFORM_PROVIDER_NULL_VERSION}.zip -o ./terraform-provider-null.zip
         unzip -o ./terraform-provider-null.zip  >/dev/null 2>&1
