@@ -32,11 +32,6 @@ resource "ibm_is_instance_template" "node_template" {
   zone           = var.vpc_zone
   resource_group = data.ibm_resource_group.default_group.id
   keys           = [data.ibm_is_ssh_key.ssh_key.id]
-
-  primary_network_interface {
-    subnet          = local.subnet_id
-    security_groups = [local.security_group_id]
-  }
 }
 
 module "master" {
