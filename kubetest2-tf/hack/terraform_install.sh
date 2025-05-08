@@ -27,7 +27,7 @@ install_terraform(){
     if [[ ! -z $(command -v terraform) ]]; then
         echo "terraform already present"
     else
-        echo"s390x installation"
+        echo "s390x installation"
         cd /tmp
         curl -fsSL https://github.com/hashicorp/terraform/archive/refs/tags/v${TF_VERSION}.zip -o ./terraform.zip
         unzip -o ./terraform.zip  >/dev/null 2>&1
