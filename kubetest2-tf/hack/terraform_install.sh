@@ -67,7 +67,7 @@ build_ibm_provider(){
 }
 
 build_null_provider(){
-    if [ ! -f "${TF_PLUGIN_PATH}/hashicorp/null/${TERRAFORM_PROVIDER_NULL_VERSION}/linux_ppc64le/terraform-provider-null" || ! -f "${TF_PLUGIN_PATH}/hashicorp/null/${TERRAFORM_PROVIDER_NULL_VERSION}/linux_s390x/terraform-provider-null" ]; then
+    if [[ ! -f "${TF_PLUGIN_PATH}/hashicorp/null/${TERRAFORM_PROVIDER_NULL_VERSION}/linux_ppc64le/terraform-provider-null" || ! -f "${TF_PLUGIN_PATH}/hashicorp/null/${TERRAFORM_PROVIDER_NULL_VERSION}/linux_s390x/terraform-provider-null" ]]; then
         echo "building null provider"
         cd /tmp
         curl -fsSL https://github.com/hashicorp/terraform-provider-null/archive/refs/tags/v${TERRAFORM_PROVIDER_NULL_VERSION}.zip -o ./terraform-provider-null.zip
