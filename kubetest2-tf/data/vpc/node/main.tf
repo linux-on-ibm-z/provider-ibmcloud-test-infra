@@ -1,7 +1,6 @@
 resource "ibm_is_instance" "node" {
   name              = var.node_name
   instance_template = var.node_instance_template_id
-  zone              = var.zone
 }
 
 resource "ibm_is_floating_ip" "node" {
