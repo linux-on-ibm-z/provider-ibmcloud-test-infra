@@ -44,7 +44,8 @@ module "master" {
   node_name                 = "${var.cluster_name}-master"
   node_instance_template_id = ibm_is_instance_template.node_template.id
   resource_group            = data.ibm_resource_group.default_group.id
-  zone                      = var.vpc_zone
+  subnet_id                 = local.subnet_id
+  security_group_id         = local.security_group_id
 }
 
 module "workers" {
@@ -53,7 +54,8 @@ module "workers" {
   node_name                 = "${var.cluster_name}-worker-${count.index}"
   node_instance_template_id = ibm_is_instance_template.node_template.id
   resource_group            = data.ibm_resource_group.default_group.id
-  zone                      = var.vpc_zone
+  subnet_id                 = local.subnet_id
+  security_group_id         = local.security_group_id
 }
 
 resource "null_resource" "wait-for-master-completes" {
