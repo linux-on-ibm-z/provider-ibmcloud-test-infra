@@ -1,10 +1,7 @@
 resource "ibm_is_instance" "node" {
   name              = var.node_name
   instance_template = var.node_instance_template_id
-  primary_network_interface {
-    subnet          = module.vpc-instance.subnet_id
-    security_groups = [module.vpc-instance.security_group_id]
-  }
+  zone              = var.zone
 }
 
 resource "ibm_is_floating_ip" "node" {
