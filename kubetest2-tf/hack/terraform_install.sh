@@ -27,7 +27,6 @@ install_terraform(){
     if [[ ! -z $(command -v terraform) ]]; then
         echo "terraform already present"
     else
-        echo "s390x installation"
         cd /tmp
         curl -fsSL https://github.com/hashicorp/terraform/archive/refs/tags/v${TF_VERSION}.zip -o ./terraform.zip
         unzip -o ./terraform.zip  >/dev/null 2>&1
@@ -52,7 +51,6 @@ install_terraform_x86(){
 
 build_ibm_provider(){
     if [[ ! -f "${TF_PLUGIN_PATH}/IBM-Cloud/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_ppc64le/terraform-provider-ibm" || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_ppc64le/terraform-provider-ibm" || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_s390x/terraform-provider-ibm"  || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_s390x/terraform-provider-ibm" ]]; then
-        echo "building ibm provider"
         cd /tmp
         curl -fsSL https://github.com/IBM-Cloud/terraform-provider-ibm/archive/refs/tags/v${TERRAFORM_PROVIDER_IBM_VERSION}.zip -o ./terraform-provider-ibm.zip
         unzip -o ./terraform-provider-ibm.zip  >/dev/null 2>&1
@@ -87,7 +85,6 @@ if [[ "${ARCH}" == "ppc64le" ]]; then
     build_ibm_provider
     build_null_provider
 elif [[ "${ARCH}" == "s390x" ]]; then
-    echo "s390x"
     install_terraform
     build_ibm_provider
     build_null_provider
