@@ -10,6 +10,8 @@
 
 - name: Install containerd dependencies
   apt:
+    force_apt_get: yes
+    update_cache: yes
     name:
       - lvm2
     state: present
