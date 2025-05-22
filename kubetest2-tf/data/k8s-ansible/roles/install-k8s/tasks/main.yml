@@ -60,11 +60,9 @@
 
 - name: Perform kubeadm init on the control plane node based on LB configuration.
   command: >
-    {% if loadbalancer == '' -%}
-      kubeadm init --config /root/kubeadm.yaml
-    {%- else -%}
-      kubeadm init --config /root/kubeadm.yaml --upload-certs
-    {%- endif %}
+    kubeadm init --config /root/kubeadm.yaml
+    {% if loadbalancer != '' %} --upload-certs{% endif %}
+    {% if ignore_preflight_errors != '' %} --ignore-preflight-errors={{ ignore_preflight_errors }}{% endif %}
   when: inventory_hostname == groups['masters'][0]
 
 
@@ -88,7 +86,9 @@
   with_items: "{{ groups['all'] }}"
 
 - name: kubeadm join control plane nodes
-  command: "{{ kubernetes_cp_join_command }}"
+  command: >
+      {{ kubernetes_cp_join_command }}
+      {% if ignore_preflight_errors != '' %} --ignore-preflight-errors={{ ignore_preflight_errors }}{% endif %}
   when: inventory_hostname != groups['masters'][0] and node_type == "master"
 
 - name: Create a directory ${HOME}/.kube if it does not exist
@@ -134,5 +134,7 @@
   with_items: "{{ groups['all'] }}"
 
 - name: kubeadm join worker nodes
-  command: "{{ kubernetes_join_command }}"
+  command: >
+      {{ kubernetes_join_command }}
+      {% if ignore_preflight_errors != '' %} --ignore-preflight-errors={{ ignore_preflight_errors }}{% endif %}
   when: node_type == "worker"
