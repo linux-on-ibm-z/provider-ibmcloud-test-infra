@@ -9,16 +9,9 @@
       shell: subscription-manager register --username {{ username }} --password {{ password }} --auto-attach
       when:  ansible_distribution == "RedHat"
 
-- name: Update packages and kernel to latest available versions
-  package:
-    name: '*'
-    state: latest
-  when: ansible_pkg_mgr in ['yum', 'dnf']
-
-- name: Check if reboot required
-  shell: needs-restarting -r
-  register: reboot_check
-  ignore_errors: yes
+- name: Include packages and OS update tasks
+  include_role:
+    name: update-node-os
   when: ansible_distribution in ['CentOS', 'RHEL']
 
 - name: Reboot if necessary
