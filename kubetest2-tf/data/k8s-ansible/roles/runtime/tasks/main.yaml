@@ -48,9 +48,8 @@
 
     - name: Install iptables
       apt:
-        force_apt_get: yes
-        update_cache: yes
         name: iptables
+        state: present
       when: ansible_pkg_mgr == 'apt'
 
     - name: Install runc - {{ runc_version }}

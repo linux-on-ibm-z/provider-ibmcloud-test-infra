@@ -15,6 +15,11 @@
     state: latest
   when: ansible_pkg_mgr in ['yum', 'dnf']
 
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  when: ansible_pkg_mgr == 'apt'
+
 - name: Check if reboot required
   shell: needs-restarting -r
   register: reboot_check
@@ -24,4 +29,3 @@
 - name: Reboot if necessary
   reboot:
   when: ansible_distribution in ['CentOS', 'RHEL'] and reboot_check.rc == 1
-
