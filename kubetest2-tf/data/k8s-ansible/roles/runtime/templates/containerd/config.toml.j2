@@ -57,6 +57,10 @@ version = 2
 {% if (cgroup_driver is defined) and 'systemd' == cgroup_driver %}
             SystemdCgroup = true
 {% endif %}
+{% if container_runtime_test_handler %}
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.test-handler]
+          runtime_type = "io.containerd.runc.v2"
+{% endif %}
     [plugins."io.containerd.grpc.v1.cri".cni]
       bin_dir = "/opt/cni/bin"
       conf_dir = "/etc/cni/net.d"
