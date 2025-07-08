@@ -10,6 +10,9 @@ ssh_private_key: "~/.ssh/id_rsa"
 username: <username>
 password: <password>
 
+##### Node OS/Package related updates #####
+update_os_packages: false
+
 # kubeconfig on the local machine where kubeconfig content will be copied from the remote machine
 kubeconfig_path: kubeconfig
 
