@@ -4,7 +4,6 @@
     - workers
   roles:
     - role: update-pkgs
-      when: update_os_packages | bool
 
 - name: Install Runtime and Kubernetes
   hosts:
