@@ -4,6 +4,7 @@ variable "powervs_resource_group" {
 
 variable "powervs_api_key" {
   description = "Denotes the IBM Cloud API key to use"
+  sensitive   = true
 }
 
 variable "powervs_dns" {
@@ -12,7 +13,7 @@ variable "powervs_dns" {
 
 variable "powervs_dns_zone" {
   description = "IBM Cloud VPC Private DNS Zone Name"
-  default = "k8s.test"
+  default     = "k8s.test"
 }
 
 variable "powervs_image_name" {
@@ -32,13 +33,13 @@ variable "powervs_processors" {
 # The default can be overridden by exporting TF variables - export TF_VAR_controlplane_powervs_memory=X
 variable "controlplane_powervs_memory" {
   description = "Control plane's PowerVS memory in GB"
-  default = "8"
+  default     = "8"
 }
 
 # The default can be overridden by exporting TF variables - export TF_VAR_controlplane_powervs_processors=X
 variable "controlplane_powervs_processors" {
   description = "Control plane's PowerVS processor units"
-  default = "0.5"
+  default     = "0.5"
 }
 
 variable "powervs_network_name" {
@@ -47,7 +48,7 @@ variable "powervs_network_name" {
 
 variable "powervs_storage_tier" {
   description = "PowerVS backing storage tier for boot volumes"
-  default = "tier1"
+  default     = "tier1"
 }
 
 variable "powervs_service_id" {
@@ -60,7 +61,7 @@ variable "powervs_ssh_key" {
 
 variable "powervs_system_type" {
   description = "PowerVS Type of system on which the VM should be created e.g s922/e980"
-  default = "s922"
+  default     = "s922"
 }
 
 variable "powervs_region" {
