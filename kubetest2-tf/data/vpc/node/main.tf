@@ -1,6 +1,10 @@
 resource "ibm_is_instance" "node" {
   name              = var.node_name
   instance_template = var.node_instance_template_id
+  primary_network_interface {
+    subnet          = var.subnet_id
+    security_groups = [var.security_group_id]
+  }
 }
 
 resource "ibm_is_floating_ip" "node" {

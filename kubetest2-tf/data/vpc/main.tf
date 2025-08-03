@@ -1,30 +1,5 @@
-data "ibm_is_vpc" "vpc" {
-  count = var.vpc_name == "" ? 0 : 1
-  name  = var.vpc_name
-}
-
-data "ibm_is_subnet" "subnet" {
-  count = var.vpc_subnet_name == "" ? 0 : 1
-  name  = var.vpc_subnet_name
-}
-
 data "ibm_resource_group" "default_group" {
   name = var.vpc_resource_group
-}
-
-module "vpc" {
-  # Create new vpc and subnet only if vpc_name is not set
-  count          = var.vpc_name == "" ? 1 : 0
-  source         = "./vpc-instance"
-  cluster_name   = var.cluster_name
-  zone           = var.vpc_zone
-  resource_group = data.ibm_resource_group.default_group.id
-}
-
-locals {
-  vpc_id            = var.vpc_name == "" ? module.vpc[0].vpc_id : data.ibm_is_vpc.vpc[0].id
-  subnet_id         = var.vpc_name == "" ? module.vpc[0].subnet_id : data.ibm_is_subnet.subnet[0].id
-  security_group_id = var.vpc_name == "" ? module.vpc[0].security_group_id : data.ibm_is_vpc.vpc[0].default_security_group
 }
 
 data "ibm_is_image" "node_image" {
@@ -33,6 +8,22 @@ data "ibm_is_image" "node_image" {
 
 data "ibm_is_ssh_key" "ssh_key" {
   name = var.vpc_ssh_key
+}
+
+module "vpc" {
+  # Create new vpc and subnet only if vpc_name is not set
+  count          = var.vpc_name == "" ? 1 : 0
+  source         = "./vpc-instance"
+  vpc_name       = var.vpc_name
+  cluster_name   = var.cluster_name
+  zone           = var.vpc_zone
+  resource_group = data.ibm_resource_group.default_group.id
+}
+
+locals {
+  vpc_id            = module.vpc.vpc_id
+  subnet_id         = module.vpc.subnet_id
+  security_group_id = module.vpc.security_group_id
 }
 
 resource "ibm_is_instance_template" "node_template" {
@@ -55,6 +46,8 @@ module "master" {
   node_name                 = "${var.cluster_name}-master"
   node_instance_template_id = ibm_is_instance_template.node_template.id
   resource_group            = data.ibm_resource_group.default_group.id
+  subnet_id                 = local.subnet_id
+  security_group_id         = local.security_group_id
 }
 
 module "workers" {
@@ -63,6 +56,8 @@ module "workers" {
   node_name                 = "${var.cluster_name}-worker-${count.index}"
   node_instance_template_id = ibm_is_instance_template.node_template.id
   resource_group            = data.ibm_resource_group.default_group.id
+  subnet_id                 = local.subnet_id
+  security_group_id         = local.security_group_id
 }
 
 resource "null_resource" "wait-for-master-completes" {

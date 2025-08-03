@@ -23,7 +23,7 @@ TERRAFORM_PROVIDER_IBM_VERSION="1.73.0"
 TERRAFORM_PROVIDER_NULL_VERSION="3.2.3"
 TF_PLUGIN_PATH="$HOME/.terraform.d/plugins/registry.terraform.io"
 
-install_terraform_power(){
+install_terraform(){
     if [[ ! -z $(command -v terraform) ]]; then
         echo "terraform already present"
     else
@@ -50,7 +50,7 @@ install_terraform_x86(){
 }
 
 build_ibm_provider(){
-    if [[ ! -f "${TF_PLUGIN_PATH}/IBM-Cloud/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_ppc64le/terraform-provider-ibm" || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_ppc64le/terraform-provider-ibm" ]]; then
+    if [[ ! -f "${TF_PLUGIN_PATH}/IBM-Cloud/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_ppc64le/terraform-provider-ibm" || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_ppc64le/terraform-provider-ibm" || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_s390x/terraform-provider-ibm"  || ! -f "${TF_PLUGIN_PATH}/hashicorp/ibm/${TERRAFORM_PROVIDER_IBM_VERSION}/linux_s390x/terraform-provider-ibm" ]]; then
         cd /tmp
         curl -fsSL https://github.com/IBM-Cloud/terraform-provider-ibm/archive/refs/tags/v${TERRAFORM_PROVIDER_IBM_VERSION}.zip -o ./terraform-provider-ibm.zip
         unzip -o ./terraform-provider-ibm.zip  >/dev/null 2>&1
@@ -65,7 +65,8 @@ build_ibm_provider(){
 }
 
 build_null_provider(){
-    if [ ! -f "${TF_PLUGIN_PATH}/hashicorp/null/${TERRAFORM_PROVIDER_NULL_VERSION}/linux_ppc64le/terraform-provider-null" ]; then
+    if [[ ! -f "${TF_PLUGIN_PATH}/hashicorp/null/${TERRAFORM_PROVIDER_NULL_VERSION}/linux_ppc64le/terraform-provider-null" || ! -f "${TF_PLUGIN_PATH}/hashicorp/null/${TERRAFORM_PROVIDER_NULL_VERSION}/linux_s390x/terraform-provider-null" ]]; then
+        echo "building null provider"
         cd /tmp
         curl -fsSL https://github.com/hashicorp/terraform-provider-null/archive/refs/tags/v${TERRAFORM_PROVIDER_NULL_VERSION}.zip -o ./terraform-provider-null.zip
         unzip -o ./terraform-provider-null.zip  >/dev/null 2>&1
@@ -80,7 +81,11 @@ build_null_provider(){
 ARCH=$(uname -m)
 
 if [[ "${ARCH}" == "ppc64le" ]]; then
-    install_terraform_power
+    install_terraform
+    build_ibm_provider
+    build_null_provider
+elif [[ "${ARCH}" == "s390x" ]]; then
+    install_terraform
     build_ibm_provider
     build_null_provider
 elif [[ "${ARCH}" == "x86_64" ]]; then
