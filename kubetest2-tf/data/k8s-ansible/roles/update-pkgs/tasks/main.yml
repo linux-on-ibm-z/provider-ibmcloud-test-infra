@@ -12,7 +12,7 @@
 - name: Include packages and OS update tasks
   include_role:
     name: update-node-os
-  when: ansible_distribution in ['CentOS', 'RHEL']
+  when: ansible_distribution in ['CentOS', 'RHEL', 'Ubuntu']
 
 - name: Reboot if kernel-modules-extra updated or reboot if necessary
   reboot:
