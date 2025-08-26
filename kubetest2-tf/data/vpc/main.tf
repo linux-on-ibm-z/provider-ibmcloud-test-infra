@@ -11,8 +11,6 @@ data "ibm_is_ssh_key" "ssh_key" {
 }
 
 module "vpc" {
-  # Create new vpc and subnet only if vpc_name is not set
-  count          = var.vpc_name == "" ? 1 : 0
   source         = "./vpc-instance"
   vpc_name       = var.vpc_name
   cluster_name   = var.cluster_name
