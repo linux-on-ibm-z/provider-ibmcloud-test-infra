@@ -2,6 +2,7 @@
   hosts:
     - masters
   roles:
+    - update-pkgs
     - disable-swap-selinux
     - install-bridge-cni
     - install-etcd
