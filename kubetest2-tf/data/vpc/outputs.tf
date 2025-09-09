@@ -6,21 +6,21 @@ output "region" { value = var.vpc_region }
 output "zone" { value = var.vpc_zone }
 output "resource_group_id" { value = data.ibm_resource_group.default_group.id }
 output "masters" {
-  value       = [for m in module.master : m.public_ip]
+  value       = module.master[*].public_ip
   description = "k8s master node IP addresses"
 }
 
 output "workers" {
-  value       = [for w in module.workers : w.public_ip]
+  value       = module.workers[*].public_ip
   description = "k8s worker node IP addresses"
 }
 
 output "masters_private" {
-  value       = [for m in module.master : m.private_ip]
+  value       = module.master[*].private_ip
   description = "k8s master nodes private IP addresses"
 }
 
 output "workers_private" {
-  value       = [for w in module.workers : w.private_ip]
+  value       = module.workers[*].private_ip
   description = "k8s worker nodes private IP addresses"
 }
