@@ -205,7 +205,7 @@ func (d *deployer) Up() error {
 	if err != nil {
 		return err
 	}
-	var tfOutput map[string]interface{}
+	var tfOutput map[string][]interface{}
 	data, err := json.Marshal(tfMetaOutput)
 	if err != nil {
 		return fmt.Errorf("error while marshaling data %v", err)
