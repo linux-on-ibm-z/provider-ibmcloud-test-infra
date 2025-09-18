@@ -27,6 +27,22 @@
     state: present
   when: ansible_pkg_mgr in ['yum', 'dnf']
 
+- name: Disable unattended-upgrades during provisioning
+  systemd:
+    name: unattended-upgrades
+    state: stopped
+    enabled: no
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Wait for APT lock to be released
+  shell: |
+    while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+      echo "APT lock found, waiting..."
+      sleep 5
+    done
+  changed_when: false
+  when: ansible_pkg_mgr == 'apt'
+
 - name: Install prereq Ubuntu packages
   apt:
     name: "{{ packages }}"
