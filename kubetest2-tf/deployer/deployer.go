@@ -211,6 +211,8 @@ func (d *deployer) Up() error {
 		return fmt.Errorf("error while marshaling data %v", err)
 	}
 	if err := json.Unmarshal(data, &tfOutput); err != nil {
+		b, _ := json.MarshalIndent(tfMetaOutput, "", "  ")
+		fmt.Println(string(b))
 		return fmt.Errorf("error while unmarshaling data %v", err)
 	}
 	for _, machineType := range []string{"Masters", "Workers"} {
