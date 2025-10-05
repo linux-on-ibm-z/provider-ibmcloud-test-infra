@@ -210,10 +210,40 @@ func (d *deployer) Up() error {
 	if err != nil {
 		return fmt.Errorf("error while marshaling data %v", err)
 	}
-	if err := json.Unmarshal(data, &tfOutput); err != nil {
+	// if err := json.Unmarshal(data, &tfOutput); err != nil {
+	// 	b, _ := json.MarshalIndent(tfMetaOutput, "", "  ")
+	// 	fmt.Println(string(b))
+	// 	return fmt.Errorf("error while unmarshaling data %v", err)
+	// }
+	// Normalize tfMetaOutput before unmarshaling
+	var tmp map[string]interface{}
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return fmt.Errorf("error while unmarshaling intermediate data: %v", err)
+	}
+
+	normalized := make(map[string]interface{})
+	for k, v := range tmp {
+		switch val := v.(type) {
+		case string:
+			// convert scalar strings to []interface{}{"value"}
+			normalized[k] = []interface{}{val}
+		case []interface{}:
+			normalized[k] = val
+		default:
+			// convert any other type (number, bool, etc.) to string array
+			normalized[k] = []interface{}{fmt.Sprintf("%v", val)}
+		}
+	}
+
+	normData, err := json.Marshal(normalized)
+	if err != nil {
+		return fmt.Errorf("error while marshaling normalized data %v", err)
+	}
+
+	if err := json.Unmarshal(normData, &tfOutput); err != nil {
 		b, _ := json.MarshalIndent(tfMetaOutput, "", "  ")
 		fmt.Println(string(b))
-		return fmt.Errorf("error while unmarshaling data %v", err)
+		return fmt.Errorf("error while unmarshaling normalized data %v", err)
 	}
 	for _, machineType := range []string{"Masters", "Workers"} {
 		if machineIps, ok := tfOutput[strings.ToLower(machineType)]; !ok {

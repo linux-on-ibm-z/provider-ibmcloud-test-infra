@@ -10,8 +10,4 @@ type TFVars struct {
 	ResourceGroup string `json:"vpc_resource_group"`
 	NodeImageName string `json:"node_image"`
 	NodeProfile   string `json:"node_profile"`
-	Masters       []string `json:"masters"`
-    MastersPriv   []string `json:"masters_private"`
-    Workers       []string `json:"workers"`
-    WorkersPriv   []string `json:"workers_private"`
 }
