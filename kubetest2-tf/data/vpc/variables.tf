@@ -23,9 +23,9 @@ variable "node_profile" {
 }
 
 variable "vpc_region" {
-  description = "Denotes which IBM Cloud zone to connect to - .i.e: eu-de-1 eu-de-2  us-south etc."
+  default = "eu-de"
 }
 
 variable "vpc_zone" {
-  description = "Denotes which IBM Cloud zone to connect to - .i.e: eu-de-1 eu-de-2  us-south etc."
+  default = "eu-de-1"
 }
