@@ -211,7 +211,6 @@ func (d *deployer) Up() error {
 		return fmt.Errorf("error while marshaling data %v", err)
 	}
 	if d.TargetProvider == "vpc" {
-		// VPC output sometimes mixes string scalars and list values — normalize once
 		tmp := make(map[string]interface{})
 		if err := json.Unmarshal(data, &tmp); err != nil {
 			return fmt.Errorf("error while unmarshaling terraform output (vpc): %v", err)
