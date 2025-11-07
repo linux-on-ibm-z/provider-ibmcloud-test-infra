@@ -34,20 +34,10 @@
     enabled: no
   when: ansible_pkg_mgr == 'apt'
 
-- name: Kill any running unattended-upgrade processes
+- name: Wait for APT lock to be released
   shell: |
-    pids=$(pgrep -f unattended-upgrade || true)
-    if [ -n "$pids" ]; then
-      echo "Killing unattended-upgrade processes: $pids"
-      kill -9 $pids
-    fi
-  changed_when: false
-  when: ansible_pkg_mgr == 'apt'
-
-- name: Wait for dpkg/apt locks to be released
-  shell: |
-    while lsof /var/lib/dpkg/lock-frontend /var/lib/apt/lists/lock /var/cache/apt/archives/lock >/dev/null 2>&1; do
-      echo "Waiting for apt/dpkg locks to be released..."
+    while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+      echo "APT lock found, waiting..."
       sleep 5
     done
   changed_when: false
