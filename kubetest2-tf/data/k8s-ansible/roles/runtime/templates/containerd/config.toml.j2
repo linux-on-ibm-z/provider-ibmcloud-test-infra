@@ -83,8 +83,8 @@ imports = ['/etc/containerd/conf.d/*.toml']
 
       [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes]
 {% if container_runtime_test_handler %}
-        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.test-handler]
-          runtime_type = "io.containerd.runc.v2"
+        [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.test-handler]
+          runtime_type = 'io.containerd.runc.v2'
 {% endif %}
         [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.runc]
           runtime_type = 'io.containerd.runc.v2'
