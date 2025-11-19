@@ -3,7 +3,7 @@ variable "vpc_api_key" {
 }
 
 variable "vpc_resource_group" {
-  default = "default"
+  description  ="vpc resource group"
 }
 
 variable "vpc_ssh_key" {}
