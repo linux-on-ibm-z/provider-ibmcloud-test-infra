@@ -18,22 +18,9 @@
   changed_when: false
   when: ansible_pkg_mgr == 'apt'
 
-- name: Disable unattended upgrades
-  service:
-    name: unattended-upgrades
-    state: stopped
-    enabled: no
-  ignore_errors: yes
-  when: ansible_pkg_mgr == 'apt'
-
-- name: Update apt cache (reliable)
-  shell: |
-    systemctl stop unattended-upgrades || true
-    rm -f /var/lib/dpkg/lock*
-    dpkg --configure -a || true
-    apt-get update -o Acquire::ForceIPv4=true
-  environment:
-    DEBIAN_FRONTEND: noninteractive
+- name: Update apt cache
+  apt:
+    update_cache: yes
   when: ansible_pkg_mgr == 'apt'
 
 - name: Install kernel-modules-extra package for br_netfilter module
